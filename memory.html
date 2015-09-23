@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script src="assets/jquery-2.1.4.min.js"></script>
+  <script src="assets/jquery-ui-1.11.4.js"></script>
+  <script src="assets/flowtype.js"></script>
+  <script src="assets/bootstrap.js"></script>
+  <script src="jquery-memory/jquery-memory.js"></script>
+  <link href="assets/jquery-ui.css" rel="stylesheet">
+  <link href="assets/bootstrap.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
+  <script src="memory.js"></script>
+</head>
+<body>
+  <header>
+    <nav class="container navbar navbar-default">
+      <div class="navbar-header">
+        <span class="navbar-brand">Memory</span>
+        <button type="button" class="navbar-toggle"
+          data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <pan class="icon-bar"></pan>
+          <pan class="icon-bar"></pan>
+          <pan class="icon-bar"></pan>
+        </button>
+      </div>
+      <ul class="nav navbar-nav navbar-right collapse navbar-collapse">
+        <li><a href="#" id="lnkNewGame">Neues Spiel</a></li>
+        <li><a href="#">Spiel laden</a></li>
+        <li><a href="#">Spiel speichern</a></li>
+        <li><a href="#">Highscore</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="container">
+    <div class="new-game display-none col-md-4"> 
+      <label for="txtMotiveCount">Anzahl Kartenpaare: </label>
+      <input type="text" id="txtMotiveCount" value="26">
+    </div>
+    <div class="game-field display-none">
+      <div class="game-time">Zeit: 0 sek</div>
+      <div class="memory-board col-xs-10 col-xs-offset-1"></div>
+    </div>
+  </div>
+  <footer class="text-center">
+    <br>
+    Created by Benjamin Schäfer, 2015.
+  </footer>
+</body>
+</html>
+<!-- TODO: beautify by bootstrap -->

@@ -1,0 +1,38 @@
+body {
+   font-size: 16px;
+}
+
+h1,h2,h3,h4,h5,h6,p {
+   line-height: 1.45;
+}
+
+.memory-board {
+  background: #ccc;
+  border: #999 solid;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  margin: 0px auto;
+}
+
+.display-none {
+  display: none;
+}
+
+.memory-board > div {
+  background:url(assets/memory-backside.jpg);
+  border:#000 1px solid;
+  border-radius: 10%;
+  float: left;
+  text-align: center;
+  margin: 2px;
+
+  min-width: 50px;
+  width: 10vw;
+  max-width: 100px;
+  
+  min-height: 50px;
+  height: 10vw;
+  max-height: 100px;
+
+}
