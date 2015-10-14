@@ -32,15 +32,6 @@
             fontBase = width / settings.fontRatio,
             fontSize = fontBase > settings.maxFont ? settings.maxFont : fontBase < settings.minFont ? settings.minFont : fontBase;
          $el.css('font-size', fontSize + 'px');
-
-         // console.log(settings);
-         // console.log(el);
-         // console.log($el);
-         // console.log(elw);
-         // console.log(width);
-         // console.log(fontBase);
-
-         console.log(fontSize);
       };
 
 // Make the magic visible
