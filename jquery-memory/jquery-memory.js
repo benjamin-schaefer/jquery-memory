@@ -1,7 +1,7 @@
 "use strict"; // needs still "experimental javascript" enabled in browser!
 
 /* jquery-memory
- * needs jquery and ecmascript 6!
+ * needs jquery, jquery-memoryCard.js and ecmascript 6!
  */
 
  var timer;
@@ -32,13 +32,13 @@ class Memory {
   }
   
   newGame() {
-    this.openCardCount = 0;
+    this.wonCardCount = 0;
     this.currentlyOpenCards = [];
     this.motives = new Array(this.cardCount);
     this.clickCount = 0;
     this.gameTime = 0;
-    // this.isAnimating = false;
-    
+    this.cards = new Array(this.cardCount);
+
     this.createMotivesArray();
     this.resetGameField();
     this.resetGameTimer();
@@ -65,7 +65,9 @@ class Memory {
     this.motives.forEach((elem, i, array) => {
       let $card = $("<div class='memory-card'></div>");
       $card.attr("id", "card-"+ i );
-      $card.click(evt => this.onCardClick(evt.target, i) );
+      this.cards[i] = new MemoryCard($card, elem, this);
+      $card.click(evt => this.onCardClick(this.cards[i], i) );
+      $card.click(evt => this.cards[i].onClick(this.cards[i], i) );
       this.$parent.append($card);
     });
   }
@@ -79,26 +81,35 @@ class Memory {
   }
 
   onCardClick(card, index) {
-    this.clickCount++; 
-    this.flipCard(card, index);
-    this.checkBothCards();
+    this.tryFlipCard(card, index);
   }
 
-  flipCard(card, index) {
+  tryFlipCard(card, index) {
     if(this.isFlippable(card)) {
+      this.clickCount++; 
+      card.isFlipped = true;
       this.currentlyOpenCards.push(card);
-      this.showCard(card, this.motives[index])
+      
+      card.show();
     }
   }
 
-  isFlippable(card) {
-    return card.innerHTML == "" 
-      && this.currentlyOpenCards.length < 2;
-      // && ! this.isAnimating;
+  get isAnimating() {
+    this.cards.forEach((card) => {
+      if (card.isAnimating) {
+        return true;
+      }
+    });
+    return false;
   }
 
-  // Naming!
-  checkBothCards() {
+  isFlippable(card) {
+    return !card.isFlipped
+      && !this.isAnimating
+      && this.currentlyOpenCards.length < 2;
+  }
+
+  handleFlippedCards() {
     if(this.areTwocardsFlipped()) {
       if(this.areFlippedCardsIdentical()) {
         this.winPair();
@@ -110,18 +121,18 @@ class Memory {
   }
 
   areTwocardsFlipped() {
-    return this.currentlyOpenCards.length == 2;
+    return this.currentlyOpenCards.length === 2;
   }
 
   areFlippedCardsIdentical() {
-    return this.currentlyOpenCards[0].innerHTML == this.currentlyOpenCards[1].innerHTML
+    return this.currentlyOpenCards[0].motive == this.currentlyOpenCards[1].motive
   }
 
   winPair() {
-    $(this.currentlyOpenCards[0]).css("border", "#000 2px solid");
-    $(this.currentlyOpenCards[1]).css("border", "#000 2px solid");
+    this.currentlyOpenCards[0].markAsWon();
+    this.currentlyOpenCards[1].markAsWon();
     this.currentlyOpenCards = [];
-    this.openCardCount += 2;
+    this.wonCardCount += 2;
 
     if(this.isWon()) {
       this.winGame();
@@ -129,7 +140,7 @@ class Memory {
   }
 
   isWon() {
-    return this.openCardCount >= this.cardCount;
+    return this.wonCardCount >= this.cardCount;
   }
 
   winGame() {
@@ -139,18 +150,19 @@ class Memory {
 
   hideFlippedCards(){
     setTimeout(() => {
-      this.hideCard(this.currentlyOpenCards[0]);
-      this.hideCard(this.currentlyOpenCards[1]);
-      this.currentlyOpenCards = [];
+      this.currentlyOpenCards[0].hide();
+      this.currentlyOpenCards[1].hide();
+      // TODO: too early; execute once both cards are hidden again
+      // this.currentlyOpenCards = [];
     }, 1500);
   }
 
-  showCard($card, motive) {    
+  showCard(card, motive) {    
     var switchCard = () => {
-      $card.style.background = "white";
+      card.style.background = "white";
       $card.innerHTML = motive;  
     }
-    this.animateCard(180, $card, switchCard, motive);
+    this.animateCard(180, $card, switchCard);
     this.onShowCard(this, $card);
   }
 
@@ -163,7 +175,7 @@ class Memory {
     this.onHideCard(this, $card);
   }
 
-  animateCard(aimRotateY, $card, onSwitch, motive) {
+  animateCard(aimRotateY, $card, onSwitch) {
     var duration = 1000;
     var switched = false;
 
@@ -171,7 +183,6 @@ class Memory {
     {
       duration: duration,
       start: () => {
-        // this.isAnimating = true;
       },
       progress: (animation, progress) => {
         if(progress > 0.5 && !switched) {
@@ -184,8 +195,7 @@ class Memory {
         $($card).css("transform", "rotateY(" + angle + "deg)");
       },
       complete: () => { 
-        // this.isAnimating = false;
-        this.checkBothCards($card);
+        this.handleFlippedCards($card);
       }
     })
   }
